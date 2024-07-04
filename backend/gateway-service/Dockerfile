@@ -1,11 +1,14 @@
-FROM openjdk:17
+FROM eclipse-temurin:17-jre
 
 WORKDIR /gateway-service
 
 CMD ["./gradlew", "clean", "bootJar"]
 
-COPY build/libs/*.jar app.jar
+COPY build/libs/*.jar /gateway-service/app/
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "/gateway-service/app/app.jar"]
+
+
+

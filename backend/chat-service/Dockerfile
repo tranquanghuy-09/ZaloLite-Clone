@@ -1,11 +1,15 @@
-FROM openjdk:17
+FROM eclipse-temurin:17-jre
 
 WORKDIR /chat-service
 
+# Chạy lệnh Gradle để build ứng dụng
 CMD ["./gradlew", "clean", "bootJar"]
 
-COPY build/libs/*.jar app.jar
+# Copy file .jar vào thư mục /chat-service/app/
+COPY build/libs/*.jar /chat-service/app/
 
+# Expose cổng 8082
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Khởi động ứng dụng
+ENTRYPOINT ["java", "-jar", "/chat-service/app/app.jar"]
