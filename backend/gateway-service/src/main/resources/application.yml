@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: account-service
+          uri: http://account-service
+          predicates:
+            - Path=/api/v1/auth/**
+            - Path=/api/v1/account/**
+          filters:
+            - AuthenticationFilter
+          order: 1
+        - id: chat-service
+          uri: http://chat-service
+          predicates:
+            - Path=/api/v1/user/**
+            - Path=/api/v1/chat/**
+            - Path=/api/v1/group/**
+            - Path=/api/v1/voting/**
+          filters:
+            - AuthenticationFilter
+          order: 2
