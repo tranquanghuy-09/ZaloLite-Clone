@@ -1,5 +1,6 @@
 # ZaloLite Clone
   ### <i>My Role: Frontend Developer, DevOps</i>
+  <i>Contact: tranquanghuyit09@gmail.com</i>
 #### Members size: 4
 
 #### Technologies Used:
