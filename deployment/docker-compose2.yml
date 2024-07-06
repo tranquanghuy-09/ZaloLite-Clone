@@ -1,0 +1,69 @@
+version: "3.8"
+
+services:
+
+  discovery-service:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+      args:
+        - PLATFORM=linux/amd64
+    ports:
+      - "8761:8761"
+    platform: linux/amd64
+
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Dockerfile
+      args:
+        - PLATFORM=linux/amd64
+    ports:
+      - "8081:8081"
+    environment:
+      - spring.data.mongodb.uri=mongodb+srv://tranquanghuyit09:dM44Wa5wyMXPEcU7@cluster0.rf60hvf.mongodb.net/AccountService
+      - spring.data.mongodb.database=AccountService
+      - spring.cloud.discovery.enabled=true
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+      - eureka.instance.hostname=account-service
+    depends_on:
+      - discovery-service
+    restart: always
+    platform: linux/amd64
+
+  chat-service:
+    build:
+      context: ./chat-service
+      dockerfile: Dockerfile
+      args:
+        - PLATFORM=linux/amd64
+    ports:
+      - "8082:8082"
+    environment:
+      - spring.data.mongodb.uri=mongodb+srv://tranquanghuyit09:dM44Wa5wyMXPEcU7@cluster0.rf60hvf.mongodb.net/ChatService
+      - spring.data.mongodb.database=ChatService
+      - spring.cloud.discovery.enabled=true
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+      - eureka.instance.hostname=chat-service
+    depends_on:
+      - discovery-service
+    restart: always
+    platform: linux/amd64
+
+  apigateway:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+      args:
+        - PLATFORM=linux/amd64
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.cloud.discovery.enabled=true
+      - eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka
+    depends_on:
+      - discovery-service
+      - account-service
+      - chat-service
+    restart: always
+    platform: linux/amd64
