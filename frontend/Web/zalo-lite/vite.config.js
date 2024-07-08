@@ -9,12 +9,11 @@ dotenv.config();
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    open: 'auth/login',
-    port: 5173,
+    open: 'auth/login' 
   },
   resolve:{
     alias: {
-      '@assets': path.resolve(__dirname, './assets'), 
+      '@assets': path.resolve(__dirname, '/public'), 
     }
   },
   plugins: [react()],

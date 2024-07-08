@@ -29,7 +29,7 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
       case "rar":
         return (
           <img
-            src="/src/assets/icons/rar-file-format.png"
+            src="/rar-file-format.png"
             alt="RAR Icon"
             className="h-14 w-14"
           />
@@ -37,7 +37,7 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
       case "docx":
         return (
           <img
-            src="/src/assets/icons/doc.png"
+            src="/doc.png"
             alt="Doc Icon"
             className="h-14 w-14"
           />
@@ -45,7 +45,7 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
       case "doc":
         return (
           <img
-            src="/src/assets/icons/doc.png"
+            src="/doc.png"
             alt="Doc Icon"
             className="h-14 w-14"
           />
@@ -65,7 +65,7 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
       default:
         return (
           <img
-            src="/src/assets/icons/attach-file.png"
+            src="/attach-file.png"
             alt="Default Icon"
             className="h-14 w-14"
           />

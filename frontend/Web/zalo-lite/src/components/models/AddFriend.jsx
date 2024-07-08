@@ -120,9 +120,29 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
   console.log("type", type);
 
   const handleClose = () => {};
+
+  // Hàm để định dạng số điện thoại
+  const formatPhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return "";
+
+    const cleaned = phoneNumber.replace(/\D/g, "");
+
+    const match = cleaned.match(/^(\d{10})$/);
+    if (!match) return phoneNumber;
+
+    const formatted = cleaned.replace(
+      /^(\d{1,2})(\d{3})(\d{3})(\d{3})$/,
+      "+84 $2 $3 $4",
+    );
+
+    return formatted;
+  };
+
   return (
     <motion.div
-      className="h-[551.5px] w-[400px]"
+      className={` w-[400px] ${
+        localStorage.getItem("phone") == phoneNumber ? "" : "h-[551.5px]"
+      }`}
       initial={{ x: "-50vw" }} // Vị trí ban đầu: ngoài màn hình bên trái
       animate={{ x: 0 }} // Vị trí sau khi xuất hiện: giữa màn hình
       transition={{
@@ -133,7 +153,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
       }}
     >
       <div className="flex h-full">
-        <div className="relative w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl ">
+        <div className="relative w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl">
           {/* Content of the popup */}
           <div
             className="relative mb-[125px] h-[171px] bg-cover bg-center bg-no-repeat p-4"
@@ -161,9 +181,14 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                 >
                   Huỷ kết bạn
                 </button>
-                <button className="h-8 w-[178px] rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
-                  Nhắn tin
-                </button>
+                <a
+                  href={`${process.env.SEFL_HOST}/app/chat?id=${conservationFriend[0].chatID}&type=individual-chat&chatName=${conservationFriend[0].chatName}&chatAvatar=${conservationFriend[0].chatAvatar}`}
+                  className=""
+                >
+                  <button className="h-8 w-[178px] rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
+                    Nhắn tin
+                  </button>
+                </a>
               </div>
             ) : type === "FRIEND" ? (
               <div className="flex flex-1 items-center justify-center pt-[227px]">
@@ -176,7 +201,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                   </button>
                 </a>
               </div>
-            ) : (
+            ) : localStorage.getItem("phone") == phoneNumber ? null : (
               <div className="flex flex-1 items-center justify-center pt-[227px]">
                 <button
                   className="mr-4 h-8 w-[178px] rounded border bg-[#EAEDF0] text-base font-medium text-tblack"
@@ -193,7 +218,11 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
             )}
           </div>
 
-          <hr className="h-1.5 bg-slate-200" />
+          <hr
+            className={`h-1.5 bg-slate-200 ${
+              localStorage.getItem("phone") == phoneNumber ? "-mt-12" : ""
+            }  `}
+          />
 
           <div className="m-3">
             <p className="text-base font-semibold">Thông tin cá nhân</p>
@@ -204,7 +233,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                 <p className="w-72 text-left text-gray-700">{data.userName}</p>
               </div> */}
               <div className="flex pt-3">
-                <p className="w-[100px] flex-grow text-sm text-gray-700">
+                <p className="w-[100px] flex-grow text-sm text-[#7589A3]">
                   Giới tính
                 </p>
                 <p className="w-72 text-left text-sm text-tblack">
@@ -212,7 +241,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                 </p>
               </div>
               <div className="flex pb-1 pt-3">
-                <p className="w-[100px] flex-grow text-sm text-gray-700">
+                <p className="w-[100px] flex-grow text-sm text-[#7589A3]">
                   Ngày sinh
                 </p>
                 <p className="w-72 text-left text-sm text-tblack">
@@ -221,13 +250,23 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                   {dateTime.getFullYear()}
                 </p>
               </div>
+              {localStorage.getItem("phone") == phoneNumber && (
+                <div className="flex pt-3">
+                  <p className="w-[100px] flex-grow text-sm text-[#7589A3]">
+                    Điện thoại
+                  </p>
+                  <p className="w-72 text-left text-sm text-tblack">
+                    {formatPhoneNumber(phoneNumber)}
+                  </p>
+                </div>
+              )}
               {type === "FRIEND" ? (
                 <div className="flex pb-1 pt-3">
-                  <p className="w-[100px] flex-grow text-sm text-gray-700">
+                  <p className="w-[100px] flex-grow text-sm text-[#7589A3]">
                     Số điện thoại
                   </p>
                   <p className="w-72 text-left text-sm text-tblack">
-                    {phoneNumber}
+                    {formatPhoneNumber(phoneNumber)}
                   </p>
                 </div>
               ) : (
@@ -235,21 +274,27 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
               )}
             </div>
           </div>
-          <hr className="h-1.5 bg-slate-200" />
-          <div className="m-3  h-full items-center justify-center">
-            <div className="flex items-center py-2 opacity-50">
-              <img src="/id-card.png" alt="" className="w-[20px]" />
-              <span className="ml-[10px] text-sm">Chia sẻ danh thiếp</span>
-            </div>
-            <div className="flex items-center py-2">
-              <img src="/blocked.png" alt="" className="w-[18px]" />
-              <span className="ml-3 text-sm ">Chặn tin nhắn và cuộc gọi</span>
-            </div>
-            <div className="flex items-center py-2">
-              <img src="/alert.png" alt="" className="w-[18px]" />
-              <span className=" ml-3 text-sm ">Báo xấu</span>
-            </div>
-          </div>
+          {localStorage.getItem("phone") != phoneNumber && (
+            <>
+              <hr className="h-1.5 bg-slate-200" />
+              <div className="m-3  h-full items-center justify-center">
+                <div className="flex items-center py-2 opacity-50">
+                  <img src="/id-card.png" alt="" className="w-[20px]" />
+                  <span className="ml-[10px] text-sm">Chia sẻ danh thiếp</span>
+                </div>
+                <div className="flex items-center py-2">
+                  <img src="/blocked.png" alt="" className="w-[18px]" />
+                  <span className="ml-3 text-sm ">
+                    Chặn tin nhắn và cuộc gọi
+                  </span>
+                </div>
+                <div className="flex items-center py-2">
+                  <img src="/alert.png" alt="" className="w-[18px]" />
+                  <span className=" ml-3 text-sm ">Báo xấu</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </motion.div>
@@ -284,7 +329,7 @@ const AddFriendDialog3 = ({ data, updateText, text }) => {
         <div className="relative w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl ">
           {/* Content of the popup */}
           <div
-            className="relative mb-[80px] h-[171px] bg-cover bg-center bg-no-repeat p-4"
+            className="relative mb-[80px] h-[171px] bg-cover bg-center bg-no-repeat p-4 "
             style={{ backgroundImage: `url(${data.background})` }}
           >
             <div className="absolute left-4 top-48 -translate-y-1/2 transform">
@@ -548,7 +593,7 @@ export default function AddFriendDialog() {
         <Fragment>
           <div className="w-8 px-1 hover:bg-gray-200">
             <img
-              src="/src/assets/user-plus.png"
+              src="/user-plus.png"
               alt=""
               // className="w-[22px] cursor-pointer items-center justify-center"
               className="cursor-pointer items-center justify-center"
@@ -637,6 +682,11 @@ export default function AddFriendDialog() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       inputRef={phoneNumberInputRef} // Đặt ref của input
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          handleFindUserByPhoneNumber();
+                        }
+                      }}
                     />
                   </div>
                 </div>

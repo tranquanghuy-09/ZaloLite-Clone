@@ -41,7 +41,7 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
       case "rar":
         return (
           <img
-            src="/src/assets/icons/rar-file-format.png"
+            src="/rar-file-format.png"
             alt="rar Icon"
             className="h-10 w-10"
           />
@@ -49,7 +49,7 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
       case "doc":
         return (
           <img
-            src="/src/assets/icons/doc.png"
+            src="/doc.png"
             alt="Doc Icon"
             className="h-10 w-10"
           />
@@ -61,7 +61,7 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
       case "mp4":
         return (
           <img
-            src="/src/assets/icons/video.png"
+            src="/video.png"
             alt="PDF Icon"
             className="h-10 w-10"
           />
@@ -70,7 +70,7 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
       default:
         return (
           <img
-            src="/src/assets/icons/attach-file.png"
+            src="/attach-file.png"
             alt="Default Icon"
             className="h-10 w-10"
           />

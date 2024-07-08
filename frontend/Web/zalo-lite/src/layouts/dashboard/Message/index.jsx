@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import { Outlet } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 
 const MessageLayout = () => {
   const [socket, setSocket] = useState(null);
@@ -7,7 +7,7 @@ const MessageLayout = () => {
   useEffect(() => {
     const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/chat/${id}`);
     newSocket.onopen = () => {
-      console.log("WebSocket connected >>>>>>>>HUy");
+      console.log("");
     };
     setSocket(newSocket);
   }, [socket]);
@@ -52,7 +52,7 @@ const MessageLayout = () => {
 
           <div className="relative inline-block p-1">
             <img
-              src="/src/assets/group-user-plus.png"
+              src="/group-user-plus.png"
               alt=""
               className="w-8 cursor-pointer items-center justify-center"
             />
@@ -99,6 +99,6 @@ const MessageLayout = () => {
       </div>
     </div>
   );
-}
+};
 
 export default MessageLayout;

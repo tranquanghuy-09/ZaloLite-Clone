@@ -235,18 +235,38 @@ const Conversation = () => {
       });
   };
 
+  // // Hàm xử lý khi người dùng chọn ảnh
+  // const handleImageSelection2 = (e) => {
+  //   const file = e.target.files;
+  //   // if (file) {
+  //   //   handleFileUpload(file);
+  //   //   setContentType("image");
+  //   // }
+  //   const files = Array.from(file);
+  //   if (files && files.length > 0) {
+  //     console.log("Files:", files.toString());
+  //   }
+  //   uploadMultiImageToS3(files);
+  // };
+
   // Hàm xử lý khi người dùng chọn ảnh
   const handleImageSelection2 = (e) => {
-    const file = e.target.files;
-    // if (file) {
-    //   handleFileUpload(file);
-    //   setContentType("image");
-    // }
-    const files = Array.from(file);
-    if (files && files.length > 0) {
-      console.log("Files:", files.toString());
+    const files = Array.from(e.target.files);
+    const maxSize = 5 * 1024 * 1024; // Giới hạn dung lượng 5MB
+
+    // Lọc những file vượt quá giới hạn dung lượng
+    const largeFiles = files.filter((file) => file.size > maxSize);
+
+    if (largeFiles.length > 0) {
+      alert("Một hoặc nhiều ảnh quá lớn. Vui lòng chọn ảnh nhỏ hơn 10MB.");
+      e.target.value = null; // Xóa lựa chọn file nếu có file lớn hơn giới hạn
+    } else {
+      // Xử lý file nếu tất cả đều trong giới hạn
+      if (files && files.length > 0) {
+        console.log("Files:", files.toString());
+      }
+      uploadMultiImageToS3(files);
     }
-    uploadMultiImageToS3(files);
   };
 
   // // Hàm xử lý khi người dùng chọn file
@@ -267,6 +287,16 @@ const Conversation = () => {
     }
   };
 
+  const handleLimitedFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size > 10 * 1024 * 1024) {
+      alert("File quá lớn. Vui lòng chọn file nhỏ hơn 10MB.");
+      e.target.value = null; // Xóa lựa chọn file
+    } else {
+      handleFileChange(e); // Gọi hàm xử lý thay đổi file
+    }
+  };
+
   const handleVideoChange = (event) => {
     const selectedVideo = event.target.files[0];
     if (selectedVideo) {
@@ -274,6 +304,17 @@ const Conversation = () => {
       uploadFileToS3(selectedVideo);
       // Đặt loại nội dung là file
       setContentType("mp4");
+    }
+  };
+
+  // Hàm xử lý sự kiện khi thay đổi video với giới hạn dung lượng
+  const handleLimitedVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size > 10 * 1024 * 1024) {
+      alert("Video quá lớn. Vui lòng chọn video nhỏ hơn 10MB.");
+      e.target.value = null; // Xóa lựa chọn file
+    } else {
+      handleVideoChange(e);
     }
   };
 
@@ -298,6 +339,7 @@ const Conversation = () => {
     const filteredConversations = conservation.filter(
       (chat) => chat.chatName === chatName,
     );
+    // console.log("filteredConversations", filteredConversations);
     // setConservationFriend(filteredConversations);
     if (filteredConversations.length > 0) {
       setChatType(filteredConversations[0].type);
@@ -493,6 +535,7 @@ const Conversation = () => {
       if (parentID) {
         message.parentID = parentID;
         setOpenCompReplyInput(false);
+        setParentIdMsg("");
       }
       if (messageForward) {
         message.contents = messageForward;
@@ -1015,8 +1058,9 @@ const Conversation = () => {
             throw new Error("Failed to search message in conversations");
           }
           const data = await response.json();
-          console.log("SearchMsg:", data);
-          setResultSearch(data);
+          const filteredData = data.filter((item) => !item.recall);
+          console.log("SearchMsg:", filteredData);
+          setResultSearch(filteredData);
         } catch (error) {
           console.error(
             "Error fetching search message in conversations:",
@@ -1118,7 +1162,7 @@ const Conversation = () => {
   const [listLink, setListLink] = useState([]);
 
   const handleClickRightBar = () => {
-    console.log("Click");
+    // console.log("Click");
     setOpenRightBar(!openRightBar);
     const imageMessages = messages.filter(
       (message) =>
@@ -1153,6 +1197,8 @@ const Conversation = () => {
     // console.log("ListImage:", imageMessages);
     console.log("ListImage:", messages);
   };
+
+  // console.log("listLink:", listLink);
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -1233,7 +1279,6 @@ const Conversation = () => {
                   className="w-3 px-2 "
                   icon={faMagnifyingGlass}
                 />
-                {/* <img src="../assets/icons/search-dialog.png" alt="" className="border-2"  /> */}
                 <input
                   // onFocus={handleFocusPhoneClick}
                   // onBlur={handleBlurPhoneClick}
@@ -1461,7 +1506,7 @@ const Conversation = () => {
                           </div>
                           <div className="px-[80px] pb-8 pt-[80px]">
                             <img
-                              src="/src/assets/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
+                              src="/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
                               alt=""
                             />
                           </div>
@@ -1505,10 +1550,10 @@ const Conversation = () => {
             </div>
           </div>
         )}
-        <div className="flex h-screen w-full ">
-          <div className="border-1 h-screen w-full border-blue-700">
+        <div className="flex h-screen w-full">
+          <div className="border-1 h-screen w-full border-blue-700 ">
             {/* huy1 */}
-            <div className="h-[68px] w-full px-4">
+            <div className="h-[68px] w-full border-r  px-4">
               <div className="flex h-full w-full flex-row items-center justify-between">
                 <div className="flex flex-row items-center gap-x-2">
                   <Link to="/app" className="md:hidden">
@@ -1518,7 +1563,7 @@ const Conversation = () => {
                     />
                   </Link>
 
-                  <div className="hidden lg:block">
+                  <div className="block">
                     <StyledBadge
                       overlap="circular"
                       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
@@ -1549,7 +1594,7 @@ const Conversation = () => {
                       <span className="flex items-center justify-center">
                         <img
                           className="mt-[1px] h-[10px]"
-                          src="/src/assets/tag.png"
+                          src="/tag.png"
                           alt=""
                         />
                       </span>
@@ -1559,7 +1604,7 @@ const Conversation = () => {
                 <div className="flex flex-row items-center">
                   <a href="" className="p-1">
                     <img
-                      src="/src/assets/group-user-plus.png"
+                      src="/group-user-plus.png"
                       alt=""
                       className="w-[22px] "
                     />
@@ -1572,17 +1617,13 @@ const Conversation = () => {
                     }}
                   >
                     <img
-                      src="/src/assets/mini-search.png"
+                      src="/mini-search.png"
                       alt=""
                       className="m-1 h-4 w-4"
                     />
                   </div>
                   <Link to="/videocall" className="p-2">
-                    <img
-                      src="/src/assets/video.png"
-                      alt=""
-                      className="m-1 h-5 w-5"
-                    />
+                    <img src="/video.png" alt="" className="m-1 h-5 w-5" />
                   </Link>
                   <div
                     onClick={() => {
@@ -1590,11 +1631,7 @@ const Conversation = () => {
                     }}
                     className="cursor-pointer p-2"
                   >
-                    <img
-                      src="/src/assets/right-bar.png"
-                      alt=""
-                      className="m-1 h-4 w-4"
-                    />
+                    <img src="/right-bar.png" alt="" className="m-1 h-4 w-4" />
                   </div>
                 </div>
               </div>
@@ -1614,7 +1651,6 @@ const Conversation = () => {
                         icon={faMagnifyingGlass}
                         style={{ color: "#7988A1" }}
                       />
-                      {/* <img src="../assets/icons/search-dialog.png" alt="" className="border-2"  /> */}
                       <input
                         // onFocus={handleFocusPhoneClick}
                         // onBlur={handleBlurPhoneClick}
@@ -1767,7 +1803,7 @@ const Conversation = () => {
                 )}
               </div>
             )}
-            <div className="border-t">
+            <div className="border-r border-t">
               <div className="flex h-[47px] flex-row justify-items-start bg-white">
                 <div className="flex flex-row justify-items-start pl-2">
                   <div className="mr-2 flex w-10 items-center justify-center">
@@ -1834,7 +1870,7 @@ const Conversation = () => {
                     <input
                       id="fileInput"
                       type="file"
-                      onChange={handleFileChange}
+                      onChange={handleLimitedFileChange}
                       className="hidden"
                       accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
                     />
@@ -1842,7 +1878,7 @@ const Conversation = () => {
                   <div className="mr-2 mt-1 flex w-10 items-center justify-center">
                     <label htmlFor="videoInput">
                       <img
-                        src="/src/assets/icons/film.png"
+                        src="/film.png"
                         alt=""
                         className="h-[26px] w-[24px] cursor-pointer opacity-80 hover:opacity-100"
                       />
@@ -1850,7 +1886,7 @@ const Conversation = () => {
                     <input
                       id="videoInput"
                       type="file"
-                      onChange={handleVideoChange}
+                      onChange={handleLimitedVideoChange}
                       className="hidden"
                       accept=".mp4, .mov, .avi, .flv, .wmv, .mkv, .webm, .MP4"
                     />
@@ -1884,14 +1920,14 @@ const Conversation = () => {
                   </div>
                 </div>
               </div>
-              <div className={`h-${openCompReplyInput ? "120.5" : "58.5"}px`}>
+              <div className={`h-${openCompReplyInput ? "120.5" : "58.5"}px `}>
                 {/* Thêm phần nhập tin nhắn ở đây */}
                 {/* <MessageInput
               onSendMessage={handleSendMessage}
               onKeySendMessage={handleKeyPress}
             /> */}
                 <div
-                  className="flex w-full items-center bg-white"
+                  className="flex w-full items-center bg-white "
                   // style={{ height: "58.5px" }}
                 >
                   <div className="mb-0 w-full pb-0">
@@ -1911,7 +1947,7 @@ const Conversation = () => {
                               <div className="flex w-full items-center text-xs">
                                 <div className="flex">
                                   <img
-                                    src="/src/assets/icons/quotation.png"
+                                    src="/quotation.png"
                                     alt=""
                                     className="h-4 w-4"
                                   />
@@ -1973,13 +2009,14 @@ const Conversation = () => {
             </div>
           </div>
           {openRightBar && (
+            // w-[440px]
             <div className="w-[440px] overflow-y-auto bg-[#FFFFFF]">
               <div className=" w-full flex-col items-center ">
                 <div className="fixed z-50 flex w-full items-center justify-center border bg-white text-center"></div>
-                <h1 className="border-5 absolute z-50 h-[68px] w-[340px] justify-center border-b bg-white p-3 pt-5 text-center text-[18px] font-[500] text-tblack">
-                  Thông tin hội thoại
-                </h1>
-                <div className="flex h-full flex-col justify-end bg-white pt-[68px] ">
+                <div className="absolute z-50 h-[68px] w-fit justify-center border-b bg-white p-3 px-[93px] pt-5 text-center text-[18px] font-[500] text-tblack">
+                  <span className="w-full flex-1">Thông tin hội thoại</span>
+                </div>
+                <div className="flex h-full flex-col justify-end bg-white pt-[68px]">
                   <div className="my-4 flex w-full flex-wrap justify-center">
                     <div className="flex w-full  flex-col items-center justify-center">
                       <div
@@ -2007,11 +2044,7 @@ const Conversation = () => {
                     >
                       <div className="flex w-full items-center justify-center">
                         <div className="flex h-8 w-8 items-center justify-center rounded-[50%] border bg-[#E7EAED] hover:bg-gray-300">
-                          <img
-                            src="/src/assets/icons/bell.png"
-                            alt=""
-                            className="w-5"
-                          />
+                          <img src="/bell.png" alt="" className="w-5" />
                         </div>
                       </div>
                       <div className="mt-2 flex w-full items-center justify-center">
@@ -2033,7 +2066,7 @@ const Conversation = () => {
                       <div className="flex w-full items-center justify-center">
                         <div className="flex h-8 w-8 items-center justify-center rounded-[50%] border bg-[#E7EAED] hover:bg-gray-300">
                           <img
-                            src="/src/assets/icons/push-pin.png"
+                            src="/push-pin.png"
                             alt=""
                             className="h-[18px] w-[18px]"
                           />
@@ -2055,9 +2088,7 @@ const Conversation = () => {
                         <div className="flex h-8 w-8 items-center justify-center rounded-[50%] border bg-[#E7EAED] hover:bg-gray-300">
                           {/* <img src="" alt="" className="mt-1 w-5" /> */}
                           <div className="-ml-1 mt-2 rounded-[50%]">
-                            <CreateGroup
-                              image={"/src/assets/icons/people.png"}
-                            />
+                            <CreateGroup image={"/people.png"} />
                           </div>
                         </div>
                       </div>
@@ -2158,14 +2189,11 @@ const Conversation = () => {
                           <a
                             href={item.contents[0].value}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="flex w-full items-center  hover:bg-[#F1F3F4]"
                           >
                             <div className="flex h-[42px] w-[42px] items-center justify-center rounded border">
-                              <img
-                                src="/src/assets/icons/link.png"
-                                alt=""
-                                className="h-4 w-4"
-                              />
+                              <img src="/link.png" alt="" className="h-4 w-4" />
                             </div>
                             <div className="-mt-5 ml-2 w-[185px]">
                               <p className="w-[265px] truncate text-sm font-semibold text-tblack">

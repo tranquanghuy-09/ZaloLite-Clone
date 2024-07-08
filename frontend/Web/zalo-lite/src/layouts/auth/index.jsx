@@ -57,9 +57,9 @@ export default function AuthLayout() {
         const newSocket = new WebSocket(
           `${process.env.SOCKET_ACCOUNT}/ws/auth/` + data.field1,
         );
-        console.log(data.field1);
+        // console.log(data.field1);
         newSocket.onopen = () => {
-          console.log("WebSocket connected");
+          // console.log("WebSocket connected");
         };
 
         setSocket(newSocket);
@@ -114,7 +114,7 @@ export default function AuthLayout() {
       if (response.ok) {
         // Xử lý khi API trả về thành công
         const token = await response.json();
-        console.log(">>>>>>>TOKEN>>>>>>>>>>", token.field);
+        // console.log(">>>>>>>TOKEN>>>>>>>>>>", token.field);
         // navigate('/app', {token: token.field});
         navigate("/app", {
           state: { token: token.field, phoneNumber: phoneNumber },
@@ -155,9 +155,18 @@ export default function AuthLayout() {
     };
   };
 
+  const [logined, setLogined] = useState(localStorage.getItem("logined"));
+
+  useEffect(() => {
+    if (localStorage.getItem("logined") === "true") {
+      console.warn("Chưa đăng nhập: ", localStorage.getItem("logined"));
+      navigate("/app");
+    }
+  }, [logined]);
+
   return (
     <div className="w-full">
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 -ml-1 -mt-1 overflow-hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1280 654"
@@ -184,11 +193,14 @@ export default function AuthLayout() {
           />
         </svg>
       </div>
-      <div className="relative flex flex-col overflow-hidden">
+      <div className="relative mt-5 flex flex-col overflow-hidden">
         <div className="">
-          <h1 className="mt-10 p-3 text-center text-6xl font-semibold text-[#0860F8]">
+          {/* <h1 className="mt-10 p-3 text-center text-6xl font-semibold text-[#0860F8]">
             Zalo
-          </h1>
+          </h1> */}
+          <div className="mb-4 mt-12 flex items-center justify-center">
+            <img src="/Logo-Zalo.webp" alt="" className="h-[41px] w-[114px]" />
+          </div>
           <h2 className="text-center text-base font-normal text-[#333333]">
             Đăng nhập tài khoản Zalo
           </h2>

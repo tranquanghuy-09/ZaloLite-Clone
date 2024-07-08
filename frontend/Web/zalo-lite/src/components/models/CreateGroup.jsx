@@ -33,6 +33,7 @@ export default function CreateGroup({ image }) {
   const [socket, setSocket] = useState(null);
   // const [token, setToken] = useState(null);
   const [check, setCheck] = useState(false);
+  const [checkNull, setCheckNull] = useState(false);
 
   useEffect(() => {
     if (selectedOptions.length >= 2) {
@@ -228,7 +229,7 @@ export default function CreateGroup({ image }) {
       <Fragment>
         <div className={`w-8 px-1 ${image ? "" : "hover:bg-gray-200"} `}>
           <img
-            src={image ? image : "/src/assets/group-user-plus.png"}
+            src={image ? image : "/group-user-plus.png"}
             alt=""
             className="cursor-pointer items-center justify-center"
             style={{ width: "100%", height: "100%" }}
@@ -267,6 +268,7 @@ export default function CreateGroup({ image }) {
                   onBlur={handleBlurNameGroup}
                   onChange={(event) => {
                     setNameGroup(event.target.value);
+                    event.target.value!="" ? setCheckNull(true): setCheckNull(false);
                   }}
                   className={`mx-3 w-full focus:outline-none ${
                     nameGroupClick ? "border-b border-b-blue-600" : "border-b"
@@ -274,6 +276,7 @@ export default function CreateGroup({ image }) {
                   type="text"
                   placeholder="Nhập tên nhóm..."
                 />
+                
               </div>
 
               <div
@@ -332,7 +335,7 @@ export default function CreateGroup({ image }) {
               onClick={handleCreateGroup}
               variant="contained"
               color="primary"
-              disabled={!check}
+              disabled={!(check&&checkNull)}
             >
               Tạo nhóm
             </Button>

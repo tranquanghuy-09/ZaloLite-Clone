@@ -3,11 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { NavLink, Outlet } from "react-router-dom";
 import TabList from "@mui/lab/TabList";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 import AddFriendDialog from "../../components/models/AddFriend";
 import CreateGroup from "../../components/models/CreateGroup";
 import { useUser } from "../../context/UserContext";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 const Message = lazy(() => import(".")); // Lazy load Message component
 const OtherMessage = lazy(() => import("./OtherMessage")); // Lazy load OtherMessage component
@@ -15,7 +17,7 @@ const OtherMessage = lazy(() => import("./OtherMessage")); // Lazy load OtherMes
 function MessageFilterBar() {
   const location = useLocation();
   const { state } = location;
-  const {cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
+  const { cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
   // Kiểm tra xem state có tồn tại không trước khi truy cập
   if (state) {
     const { token, phoneNumber, data } = state;
@@ -26,14 +28,11 @@ function MessageFilterBar() {
   }
 
   // const { data } = location.state;
-  
-
 
   // console.log(">>>>STATE>>>>>>>>>",state);
   const [searchTerm, setSearchTerm] = useState("");
   const [item, setItem] = useState("UuTien");
   const [Component, setComponent] = useState(() => Message); // Use uppercase Component
-
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -52,8 +51,6 @@ function MessageFilterBar() {
       setComponent(() => OtherMessage);
     }
   };
-
-
 
   return (
     <div className="flex h-screen w-full grid-flow-col ">
@@ -76,9 +73,9 @@ function MessageFilterBar() {
                   className="h-8 w-full rounded-md border bg-[#EAEDF0] p-2 pl-[30px] text-sm focus:outline-none"
                 />
 
-                <AddFriendDialog/>
+                <AddFriendDialog />
 
-                <CreateGroup/>
+                <CreateGroup />
 
                 {/* <div className="relative inline-block p-1">
                   <img
@@ -114,9 +111,17 @@ function MessageFilterBar() {
                 </NavLink>
               </div>
             </div>
-            <div className="flex-1  ">
-              <Suspense fallback={<div>Loading...</div>}>
-                <Component /> {/* Use uppercase Component here */}
+            <div className="w-[344px] flex-1">
+              <Suspense
+                fallback={
+                  <Box sx={{ display: "flex" }}>
+                    <CircularProgress />
+                    <span>Loading...</span>
+                  </Box>
+                }
+              >
+                {/* Use uppercase Component here */}
+                <Component />
               </Suspense>
             </div>
           </div>
