@@ -58,7 +58,9 @@ npx expo start --port 3005
 
 <hr>
 
-### Deploy on EC2(AWS):
+### Deploy on EC2(AWS): 
+Note:
+<b>The server is currently down. </b>
 #### Technologies Used: Docker-compose, Nginx
 Some API & Socket:
 ```
