@@ -48,21 +48,6 @@ export default function Router() {
 
   const [openSearchMessage, setOpenSearchMessage] = useState(false);
 
-  // useEffect(() => {
-  //   if (location.pathname === "/app") {
-  //     // setComp(<Conversation />);
-  //     setComp(<Welcome />);
-  //   } else if (location.pathname === "/contact") {
-  //     setComp(<DetailContact />);
-  //   } else if (
-  //     location.pathname === "/app" &&
-  //     new URLSearchParams(location.search).get("id") === "2" &&
-  //     new URLSearchParams(location.search).get("type") === "individual-chat"
-  //   ) {
-  //     setComp(<Conversation />);
-  //   }
-  // }, [location]);
-
   // Nếu profileData là null, điều hướng đến trang đăng nhập
   if (
     localStorage.getItem("logined") === "false" &&
